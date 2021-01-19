@@ -1,17 +1,28 @@
 package day11
 
 fun main() {
-    val lines = loadInputData()
-    val airportSeats = AirportSeats(lines)
+    println("------PART1---------")
+    val airportSeats = AirportSeats(loadInputData())
     airportSeats.creatInitialAirportSeatsState()
 
     while (airportSeats.findIfSeatStatusChanged()) {
-        airportSeats.nextMove()
+        airportSeats.nextMove("PART1")
         println("------${airportSeats.previousCountOfFullSeats}---------")
     }
+
+    println("------PART2---------")
+
+    val airportSeatsPart2 = AirportSeats(loadInputData())
+    airportSeatsPart2.creatInitialAirportSeatsState()
+
+    while (airportSeatsPart2.findIfSeatStatusChanged()) {
+        airportSeatsPart2.nextMove("PART2")
+        println("------${airportSeatsPart2.previousCountOfFullSeats}---------")
+    }
+
 }
 
 fun loadInputData(): List<String> {
     val string = {}.javaClass.getResourceAsStream("/day11_input.txt").bufferedReader().readText().split("\n")
-    return string.map { it }
+    return string.map { it.replace("\r","") }
 }

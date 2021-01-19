@@ -11,10 +11,10 @@ class AirportSeats(private val lines: List<String>) {
         findOutSeatsNeighbors()
     }
 
-    fun nextMove() {
+    fun nextMove(part: String) {
         listOfSeats.filter { it.currentState != SeatState.NON }.forEach { seat ->
-            val currentValuer = seat.countNeighborsCurrentValue()
-            chooseNextState(currentValuer, seat)
+            val currentValuer = if (part == "PART1") seat.countNeighborsCurrentValue() else seat.countValueOfAllVisibleChar()
+            chooseNextState(currentValuer, seat, part)
         }
         listOfSeats.filter { it.currentState != SeatState.NON }.forEach { seat ->
             seat.changeState()
@@ -48,7 +48,7 @@ class AirportSeats(private val lines: List<String>) {
             "#" -> return SeatState.FULL
             "." -> return SeatState.NON
         }
-        throw InvalidTypeException("Could not resolve Seat State of $char")
+        throw InvalidTypeException("Could not resolve Seat State of...")
     }
 
     private fun findOutSeatsNeighbors() {
@@ -59,17 +59,21 @@ class AirportSeats(private val lines: List<String>) {
 
     private fun getNeighbors(seat: Seat): List<Seat> {
         return listOfSeats
-            .filter { it.x in seat.x - 1..seat.x + 1 && it.y in seat.y - 1..seat.y + 1 }
-            .filterNot { it.x == seat.x && it.y == seat.y }
+                .filter { it.x in seat.x - 1..seat.x + 1 && it.y in seat.y - 1..seat.y + 1 }
+                .filterNot { it.x == seat.x && it.y == seat.y }
     }
 
-    private fun chooseNextState(value: Int, seat: Seat) {
+    private fun chooseNextState(value: Int, seat: Seat, part: String) {
         if (value == 0) {
             seat.nextState = SeatState.FULL
         }
 
-        if (value > 3 && seat.currentState == SeatState.FULL) {
+        if (value > getTollerance(part) && seat.currentState == SeatState.FULL) {
             seat.nextState = SeatState.EMPTY
         }
+    }
+
+    private fun getTollerance(part: String): Int {
+        return if (part == "PART1") 3 else 4
     }
 }
