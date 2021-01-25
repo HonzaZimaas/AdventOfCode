@@ -1,77 +1,66 @@
 package day12
 
-import day12.Coordination.*
-import java.lang.IllegalStateException
+import day12.Coordination.DirectType
 
 class CoordinationService(private val coordinations: List<Coordination>) {
     private var currentFacingValue = 0
-    private var rovne = 0
-    private var podelne = 0
+    private var northOrSouthDistance = 0
+    private var eastOrWestDistance = 0
     private var facingDirect = DirectType.EAST
 
-    fun navigate() {
+    fun navigateAccordingToCoordination() {
         coordinations.forEach { coordination ->
             if (coordination.direct == DirectType.LEFT || coordination.direct == DirectType.RIGHT) {
-                currentFacingValue = checkDirection(coordination)
+                currentFacingValue = changeShipFacing(coordination)
             }
-            if (coordination.direct in listOf(DirectType.WEST, DirectType.EAST, DirectType.SOUTH, DirectType.NORTH)) {
-                tujemetoda(coordination)
+            if (coordination.direct in listOf(DirectType.EAST, DirectType.SOUTH, DirectType.WEST, DirectType.NORTH)) {
+                countDirectDistance(coordination, coordination.direct)
             }
             if (coordination.direct == DirectType.FORWARD) {
-                if (facingDirect == DirectType.EAST) {
-                    podelne += coordination.distance
-                }
-                if (facingDirect == DirectType.SOUTH) {
-                    rovne += coordination.distance
-                }
-                if (facingDirect == DirectType.WEST) {
-                    podelne -= coordination.distance
-                }
-                if (facingDirect == DirectType.NORTH) {
-                    rovne -= coordination.distance
-                }
+                countDirectDistance(coordination, facingDirect)
             }
-            println("Facing: $facingDirect : $rovne, $podelne")
+            println("Facing: $facingDirect : $northOrSouthDistance, $eastOrWestDistance")
         }
     }
 
-    private fun checkDirection(coordination: Coordination): Int {
-        val nextDirect = coordination.distance / 90
-        var newFacing = if (coordination.direct == DirectType.RIGHT) currentFacingValue + nextDirect else currentFacingValue - nextDirect
+    private fun changeShipFacing(coordination: Coordination): Int {
+        var newFacing =
+            if (coordination.direct == DirectType.RIGHT) currentFacingValue + coordination.rotationDegree!!
+            else currentFacingValue - coordination.rotationDegree!!
 
         if (newFacing > 3) {
-            newFacing -= 3
+            newFacing -= 4
         }
         if (newFacing < 0) {
             newFacing += 4
         }
 
-        facingDirect = getFacingInDirect(newFacing)
+        facingDirect = getFacingInDirectType(newFacing)
         return newFacing
     }
 
-    private fun getFacingInDirect(int: Int): DirectType {
-        when (int) {
+    private fun getFacingInDirectType(shipFacing: Int): DirectType {
+        when (shipFacing) {
             0 -> return DirectType.EAST
             1 -> return DirectType.SOUTH
             2 -> return DirectType.WEST
             3 -> return DirectType.NORTH
         }
-        throw IllegalStateException("")
+        throw IllegalStateException("This will never happend: $shipFacing")
     }
 
-    private fun tujemetoda(coordination: Coordination) {
-        if (coordination.direct == DirectType.EAST) {
-            podelne += coordination.distance
+    private fun countDirectDistance(coordination: Coordination, direct: DirectType) {
+        if (direct == DirectType.EAST) {
+            eastOrWestDistance += coordination.distance
         }
-        if (coordination.direct == DirectType.SOUTH) {
-            rovne += coordination.distance
+        if (direct == DirectType.SOUTH) {
+            northOrSouthDistance += coordination.distance
         }
-        if (coordination.direct == DirectType.WEST) {
-            podelne -= coordination.distance
+        if (direct == DirectType.WEST) {
+            eastOrWestDistance -= coordination.distance
         }
-        if (coordination.direct == DirectType.NORTH) {
-            rovne -= coordination.distance
+        if (direct == DirectType.NORTH) {
+            northOrSouthDistance -= coordination.distance
         }
     }
 }

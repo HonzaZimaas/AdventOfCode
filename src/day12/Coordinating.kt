@@ -4,7 +4,7 @@ fun main() {
     val listOfCoordinations = loadInputData()
 
     val service = CoordinationService(listOfCoordinations)
-    service.navigate()
+    service.navigateAccordingToCoordination()
 }
 
 

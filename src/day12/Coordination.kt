@@ -1,9 +1,8 @@
 package day12
 
-import java.lang.IllegalStateException
-
 data class Coordination(private val directLeter: String, val distance: Int) {
     val direct = getDirectType(directLeter)
+    val rotationDegree = getRotationDegree(distance)
 
     private fun getDirectType(direct: String): DirectType {
         when (direct) {
@@ -15,7 +14,11 @@ data class Coordination(private val directLeter: String, val distance: Int) {
             "R" -> return DirectType.RIGHT
             "F" -> return DirectType.FORWARD
         }
-        throw IllegalStateException("This could never happend $direct    ")
+        throw IllegalStateException("This will never happend: $direct")
+    }
+
+    private fun getRotationDegree(distance: Int): Int? {
+        return if (direct == DirectType.LEFT || direct == DirectType.RIGHT) distance / 90 else null
     }
 
     enum class DirectType {
