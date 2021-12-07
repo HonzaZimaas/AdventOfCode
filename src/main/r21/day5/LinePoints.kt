@@ -1,6 +1,6 @@
 package main.r21.day5
 
-class LinePoints(line: String) {
+class LinePoints(line: String, private var gridOfPoints: GridOfPoints) {
     private var horizontal = false
     private var vertical = false
     private lateinit var basePoint: Point
@@ -16,6 +16,21 @@ class LinePoints(line: String) {
         return horizontal || vertical
     }
 
+    fun calculateDirection() {
+        if (horizontal) {
+            val diffNumber = kotlin.math.abs(basePoint.x - directPoint.x)
+            for (diff in 0 until diffNumber) {
+                gridOfPoints.getPointFromGrid(diff, basePoint.y).setOveride()
+            }
+        }
+        if (vertical) {
+            val diffNumber = kotlin.math.abs(basePoint.y - directPoint.y)
+            for (diff in 0 until diffNumber) {
+                gridOfPoints.getPointFromGrid(basePoint.x, diff).setOveride()
+            }
+        }
+    }
+
     private fun parsePoints(line: String) {
         val points = line.split(" -> ")
         basePoint = getPoints(points.first())
@@ -24,15 +39,15 @@ class LinePoints(line: String) {
 
     private fun getPoints(point: String): Point {
         val splitted = point.split(",").map { it.toInt() }
-        return Point(splitted[0], splitted[1])
+        return gridOfPoints.getPointFromGrid(splitted[0], splitted[1])
     }
 
     private fun isHorintal(): Boolean {
-        return basePoint.x == directPoint.x
+        return basePoint.y == directPoint.y
     }
 
     private fun isVertical(): Boolean {
-        return basePoint.y == directPoint.y
+        return basePoint.x == directPoint.x
     }
 
     override fun toString(): String {
