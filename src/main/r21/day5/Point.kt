@@ -1,4 +1,4 @@
-package main.r21.day5
+package main.r21.day5e
 
 class Point(
     val x: Int,
@@ -6,11 +6,11 @@ class Point(
 ) {
     var overide: Int = 0
 
-    fun setOveride() {
+    fun addOverrlay() {
         overide += 1
     }
 
     override fun toString(): String {
-        return "X: $x -> Y: $y"
+        return "$x, $y + $overide"
     }
 }
